@@ -1,9 +1,11 @@
-import useQueryParams from './useQueryParams';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import useQueryParams from './useQueryParams';
 
-export default function VerifyEmail() {
+export default function VerifyForgotPasswordToken() {
   const [message, setMessage] = useState('');
+  const navigate = useNavigate();
   const { token } = useQueryParams();
   // Sử dụng useRef để giữ controller giữa các render
   const controllerRef = useRef(null);
@@ -18,20 +20,18 @@ export default function VerifyEmail() {
 
       axios
         .post(
-          '/users/verify-email', //URL xác thực email bên backend
-          { email_verify_token: token },
+          '/users/verify-forgot-password', //URL xác thực token forgot password bên backend
+          { forgot_password_token: token },
           {
             baseURL: import.meta.env.VITE_API_URL,
             signal: controllerRef.current.signal,
           }
         )
-        .then((res) => {
-          setMessage(res.data.message);
-          if (res.data.result) {
-            const { access_token, refresh_token } = res.data.result;
-            localStorage.setItem('access_token', access_token);
-            localStorage.setItem('refresh_token', refresh_token);
-          }
+        .then(() => {
+          // Cách 1: lưu forgot_passwrod_token vào localstorage và trang ResetPassword chỉ cần get ra và dùng
+
+          // Cách 2: dùng state của React Router để truyền forgot_password_token qua trang ResetPassword
+          navigate('/reset-password', { state: { forgot_password_token: token } });
         })
         .catch((error) => {
           setMessage(error.response.data.message);
@@ -44,7 +44,6 @@ export default function VerifyEmail() {
         controllerRef.current.abort();
       }
     };
-  }, [token]);
-
+  }, [token, navigate]);
   return <div>{message}</div>;
 }
