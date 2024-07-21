@@ -1,4 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
+import Chat from './Chat';
 import Home from './Home';
 import Login from './Login';
 import ResetPassword from './ResetPassword';
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
   {
     path: '/reset-password',
     element: <ResetPassword />,
+  },
+  {
+    path: '/chat',
+    element: <Chat />,
   },
 ]);
 
