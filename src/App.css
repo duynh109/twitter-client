@@ -64,8 +64,8 @@
 }
 
 .chat {
-  max-height: 300px;
-  max-width: 500px;
+  max-height: 400px;
+  width: 300px;
   overflow-y: scroll;
 }
 
