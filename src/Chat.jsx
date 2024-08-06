@@ -39,11 +39,6 @@ export default function Chat() {
 
   // Kết nối socket với sever và nhận tin nhắn
   useEffect(() => {
-    socket.auth = {
-      Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-    };
-    socket.connect();
-
     socket.on('receive_message', (data) => {
       const { payload } = data;
       setConversations((conversations) => [...conversations, payload]);
@@ -51,6 +46,9 @@ export default function Chat() {
 
     socket.on('connect_error', (err) => {
       console.log(err.data);
+    });
+    socket.on('disconnect', (reason) => {
+      console.log(reason);
     });
     return () => {
       socket.disconnect();
@@ -155,8 +153,8 @@ export default function Chat() {
           loader={<h4>Loading...</h4>}
           scrollableTarget="scrollableDiv"
         >
-          {conversations.map((conversation, index) => (
-            <div key={index} className="message-container">
+          {conversations.map((conversation) => (
+            <div key={conversation._id} className="message-container">
               <div className={'message ' + (conversation.sender_id === profile._id ? 'message-right' : '')}>{conversation.content}</div>
             </div>
           ))}
